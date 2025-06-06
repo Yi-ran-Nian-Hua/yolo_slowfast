@@ -1,93 +1,100 @@
-# Yolov5+SlowFast: Realtime Action Detection
+# YOLO-SlowFast 动作识别系统
 
-### A realtime action detection frame work based on PytorchVideo. 
+这是一个结合了YOLOv5目标检测和SlowFast网络动作识别的系统，可以实时检测视频中的人物并进行动作识别。
 
-#### Here are some details about our modification:
+## 功能特点
 
-- we choose yolov5 as an object detector instead of Faster R-CNN, it is faster and more convenient
-- we use a tracker(deepsort) to allocate action labels to all objects(with same ids) in different frames
-- our processing speed reached 24.2 FPS at 30 inference batch size (on a single RTX 2080Ti GPU)
+- 使用YOLOv5进行人物检测
+- 使用DeepSORT进行目标跟踪
+- 使用SlowFast网络进行动作识别
+- 支持实时视频处理
+- 支持多种动作类别识别
 
-> Relevant infomation: [FAIR/PytorchVideo](https://github.com/facebookresearch/pytorchvideo); [Ultralytics/Yolov5](https://github.com/ultralytics/yolov5)
-
-#### Demo comparison between original(<-left) and ours(->right).
-
-<img src="./demo/ava_slowfast.gif" width="400" /><img src="./demo/yolov5+slowfast.gif" width="400" />
-
-#### Update Log:
-
-
-- 2023.03.31  fix some bugs(maybe caused by yolov5 version upgrade), support real time testing(test on camera or video stearm).
-
-- 2022.01.24  optimize pre-process method(no need to extract video to image before processing), faster and cleaner.
-
-
-## Installation
-
-1. clone this repo:
-
-   ```
-   git clone https://github.com/wufan-tb/yolo_slowfast
-   cd yolo_slowfast
-   ```
-
-2. create a new python environment (optional):
-
-   ```
-   conda create -n {your_env_name} python=3.7.11
-   conda activate {your_env_name}
-   ```
-
-3. install requiments:
-
-   ```
-   pip install -r requirements.txt
-   ```
-   
-4. download weights file(ckpt.t7) from [[deepsort]](https://drive.google.com/drive/folders/1xhG0kRH1EX5B9_Iz8gQJb7UNnn_riXi6) to this folder:
-
-   ```
-   ./deep_sort/deep_sort/deep/checkpoint/
-   ```
-
-5. test on your video/camera/stream:
-
-
-   ```
-   python yolo_slowfast.py --input {path to your video/camera/stream}
-   ```
-
-   The first time execute this command may take some times to download the yolov5 code and it's weights file from torch.hub, keep your network connection.
-
-   set `--input 0` to test on your local camera, set `--input {stream path, such as "rtsp://xxx" or "rtmp://xxxx"}` to test on viewo stream.
-
-
-## References
-
-Thanks for these great works:
-
-[1] [Ultralytics/Yolov5](https://github.com/ultralytics/yolov5)
-
-[2] [ZQPei/deepsort](https://github.com/ZQPei/deep_sort_pytorch) 
-
-[3] [FAIR/PytorchVideo](https://github.com/facebookresearch/pytorchvideo)
-
-[4] AVA: A Video Dataset of Spatio-temporally Localized Atomic Visual Actions. [paper](https://arxiv.org/pdf/1705.08421.pdf)
-
-[5] SlowFast Networks for Video Recognition. [paper](https://arxiv.org/pdf/1812.03982.pdf)
-
-## Citation
-
-If you find our work useful, please cite as follow:
+## 项目结构
 
 ```
-{   yolo_slowfast,
-    author = {Wu Fan},
-    title = { A realtime action detection frame work based on PytorchVideo},
-    year = {2021},
-    url = {\url{https://github.com/wufan-tb/yolo_slowfast}}
-}
+.
+├── yolo_slowfast.py      # 主程序
+├── requirements.txt      # 依赖包列表
+├── training/            # 训练相关代码
+│   ├── README.md        # 训练说明
+│   ├── data_loader.py   # 数据加载器
+│   ├── train_ava.py     # 训练脚本
+│   ├── preprocess_ava.py # 数据预处理
+│   └── download_ava_videos.sh # 数据下载脚本
+├── deep_sort/           # DeepSORT跟踪算法
+├── selfutils/           # 工具函数
+└── demo/               # 示例视频
 ```
+
+## 安装
+
+1. 克隆仓库：
+```bash
+git clone https://github.com/yourusername/yolo_slowfast.git
+cd yolo_slowfast
+```
+
+2. 安装依赖：
+```bash
+pip install -r requirements.txt
+```
+
+3. 下载预训练模型：
+```bash
+# YOLOv5模型会自动下载
+# SlowFast模型会在运行时自动下载
+```
+
+## 使用方法
+
+1. 运行实时视频处理：
+```bash
+python yolo_slowfast.py --input 0  # 使用摄像头
+# 或
+python yolo_slowfast.py --input video.mp4  # 处理视频文件
+```
+
+2. 参数说明：
+- `--input`: 输入源（摄像头ID或视频文件路径）
+- `--output`: 输出视频保存路径
+- `--conf`: 目标检测置信度阈值
+- `--device`: 运行设备（cpu/cuda）
+- `--show`: 是否显示处理过程
+
+## 训练自己的模型
+
+1. 准备数据：
+```bash
+cd training
+./download_ava_videos.sh  # 下载AVA数据集
+python preprocess_ava.py  # 预处理数据
+```
+
+2. 开始训练：
+```bash
+python train_ava.py --train_annotation processed_data/train_annotations.csv \
+                   --val_annotation processed_data/val_annotations.csv \
+                   --video_dir processed_data \
+                   --checkpoint_dir checkpoints
+```
+
+## 注意事项
+
+1. 确保有足够的GPU内存（建议至少8GB）
+2. 训练过程需要大量磁盘空间（至少100GB）
+3. 视频处理可能需要较长时间
+
+## 许可证
+
+MIT License
+
+## 致谢
+
+- [YOLOv5](https://github.com/ultralytics/yolov5)
+- [SlowFast Networks](https://github.com/facebookresearch/SlowFast)
+- [DeepSORT](https://github.com/nwojke/deep_sort)
+- [AVA Dataset](https://research.google.com/ava/)
 
 ### Stargazers over time
 

@@ -318,3 +318,7 @@ item {
   name: "watch (a person)"
   id: 80
 }
+item {
+  name: "raise hand"
+  id: 63
+}

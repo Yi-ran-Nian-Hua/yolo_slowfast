@@ -188,7 +188,7 @@ if __name__=="__main__":
     parser.add_argument('--imsize', type=int, default=640, help='inference size (pixels)')
     parser.add_argument('--conf', type=float, default=0.4, help='object confidence threshold')
     parser.add_argument('--iou', type=float, default=0.4, help='IOU threshold for NMS')
-    parser.add_argument('--device', default='cuda', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
+    parser.add_argument('--device', default='cpu', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--classes', nargs='+', type=int, help='filter by class: --class 0, or --class 0 2 3')
     parser.add_argument('--show', action='store_true', help='show img')
     config = parser.parse_args()
